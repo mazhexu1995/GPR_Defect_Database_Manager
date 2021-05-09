@@ -155,6 +155,7 @@ class Ui_Dialog(object):
         self.All_Button.clicked.connect(self.browsingFiles)
         self.pushButton.clicked.connect(self.defectClassMethod)
         self.comboBox.currentIndexChanged.connect(self.filterClassMethod)
+        self.reserchMap.clicked.connect(self.reserchMapMethod)
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
@@ -185,6 +186,27 @@ class Ui_Dialog(object):
             self.comboBox.setItemText(i, _translate("Dialog", defectType))
 
 
+    def reserchMapMethod(self):
+        cur, conn = self.initDatabase()
+        databaseCol = ["ID", "文件名", "病害类型", "标签文件路径", "雷达文件路径"]  # 表头列
+        self.tableWidget.setColumnCount(len(databaseCol))
+        cnt = list()
+        for tup in databaseCol:
+            cnt.append(tup)
+        cnt.append(" ")
+        self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        self.tableWidget.setHorizontalHeaderLabels(cnt)
+        mutiTableSQL = "SELECT 病害标签.id, 病害标签.文件名, 病害标签.病害类型, 病害标签.附件路径, 雷达图谱.附件路径 FROM 病害标签 LEFT JOIN 雷达图谱 ON 病害标签.文件名=雷达图谱.文件名"
+        cur.execute(mutiTableSQL)
+        adminInfor = (cur.fetchall())
+        rowCount = len(adminInfor)
+        self.tableWidget.setRowCount(rowCount)
+        for i in range(0, rowCount):
+            for j in range(0, len(databaseCol)):
+                newItem = QTableWidgetItem(str(adminInfor[i][j]))
+                self.tableWidget.setItem(i, j, newItem)
+        cur.close()
+        conn.close()
 
     def filterClassMethod(self):
         defectClass = self.comboBox.currentText()
