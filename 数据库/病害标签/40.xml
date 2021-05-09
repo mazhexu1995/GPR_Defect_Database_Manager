@@ -1,0 +1,26 @@
+<annotation verified="yes">
+	<folder>GPR_to_IMG</folder>
+	<filename>3-3.gan9.jpg</filename>
+	<path>/media/psdz/Samsung_T5/管道雷达图/GPR_to_IMG/3-3.gan9.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>1024</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>Loose</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>244</xmin>
+			<ymin>74</ymin>
+			<xmax>457</xmax>
+			<ymax>259</ymax>
+		</bndbox>
+	</object>
+</annotation>

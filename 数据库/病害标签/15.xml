@@ -1,0 +1,26 @@
+<annotation verified="yes">
+	<folder>GPR_to_IMG</folder>
+	<filename>2-2.zol7.jpg</filename>
+	<path>/media/psdz/Samsung_T5/管道雷达图/GPR_to_IMG/2-2.zol7.jpg</path>
+	<source>
+		<database>Unknown</database>
+	</source>
+	<size>
+		<width>1024</width>
+		<height>512</height>
+		<depth>1</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>Separate</name>
+		<pose>Unspecified</pose>
+		<truncated>0</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>588</xmin>
+			<ymin>78</ymin>
+			<xmax>764</xmax>
+			<ymax>252</ymax>
+		</bndbox>
+	</object>
+</annotation>
