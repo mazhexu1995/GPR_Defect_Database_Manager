@@ -4,3 +4,8 @@
 # User-specific stuff
 .idea/
 _pycache_
+MainWindow.spec
+20210509060713169_easyicon_net_32.ico
+books-stack-of-three.png
+build/
+dist/

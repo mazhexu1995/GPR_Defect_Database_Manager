@@ -5,19 +5,9 @@
 # Created by: PyQt5 UI code generator 5.11.3
 #
 # WARNING! All changes made in this file will be lost!
-import datetime
-import sys
 import pyodbc
-import time
 
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QHeaderView
-from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import *
-from PyQt5.QtGui import QIcon, QBrush, QColor
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
-from PyQt5 import QtCore, QtGui, QtWidgets
 import os
 import shutil
 import sys
@@ -33,7 +23,7 @@ class Ui_Dialog(object):
 
     def getClassNum(self):
         cur, conn = self.initDatabase()
-        cur.execute("SELECT DISTINCT 病害类型 FROM 病害标签")
+        cur.execute("SELECT DISTINCT 病害 FROM 映射表")
         adminInfor = (cur.fetchall())
         rowCount = len(adminInfor)
         self.classNum = rowCount
@@ -143,7 +133,6 @@ class Ui_Dialog(object):
         self.retranslateUi(Dialog)
         self.comboBox.setCurrentIndex(-1)
 
-
         # 初始化数据库表头
         # self.initDatabase()
         self.researchAllMethod()
@@ -169,12 +158,12 @@ class Ui_Dialog(object):
         self.All_Button.setText(_translate("Dialog", "上传文件"))
         self.selectCount.setText(_translate("Dialog", "查询标签数据"))
         self.researchAll.setText(_translate("Dialog", "查询雷达图像"))
-        self.pushButton.setText(_translate("Dialog", "查询病害类别"))
+        self.pushButton.setText(_translate("Dialog", "查询病害表"))
         self.label_3.setText(_translate("Dialog", "筛选病害类别"))
         self.reserchMap.setText(_translate("Dialog", "图像与病害映射表"))
 
         cur, conn = self.initDatabase()
-        cur.execute("SELECT DISTINCT 病害类型 FROM 病害标签")
+        cur.execute("SELECT DISTINCT 病害 FROM 映射表")
         adminInfor = (cur.fetchall())
         rowCount = len(adminInfor)
         self.classNum = rowCount
@@ -184,7 +173,6 @@ class Ui_Dialog(object):
             print(str(adminInfor[i][0]))
             defectType = adminInfor[i][0]
             self.comboBox.setItemText(i, _translate("Dialog", defectType))
-
 
     def reserchMapMethod(self):
         cur, conn = self.initDatabase()
@@ -233,8 +221,27 @@ class Ui_Dialog(object):
 
     def defectClassMethod(self):
         cur, conn = self.initDatabase()
-        databaseCol = ["病害类型", "病害数量"]  # 表头列
-        # defectClass = []
+        # databaseCol = ["病害类型", "病害数量"]  # 表头列
+        # # defectClass = []
+        # self.tableWidget.setColumnCount(len(databaseCol))
+        # cnt = list()
+        #
+        # for tup in databaseCol:
+        #     cnt.append(tup)
+        # cnt.append(" ")
+        # self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        # self.tableWidget.setHorizontalHeaderLabels(cnt)
+        # cur.execute("SELECT DISTINCT 病害类型, COUNT(*) AS 病害数量 FROM 病害标签 GROUP BY 病害类型")
+        # adminInfor = (cur.fetchall())
+        # rowCount = len(adminInfor)
+        # self.tableWidget.setRowCount(rowCount)
+        # for i in range(0, rowCount):
+        #     for j in range(0, len(databaseCol)):
+        #         newItem = QTableWidgetItem(str(adminInfor[i][j]))
+        #         self.tableWidget.setItem(i, j, newItem)
+        # cur.close()
+        # conn.close()
+        databaseCol = ["ID", "文件名", "病害"]  # 表头列
         self.tableWidget.setColumnCount(len(databaseCol))
         cnt = list()
 
@@ -243,7 +250,8 @@ class Ui_Dialog(object):
         cnt.append(" ")
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.tableWidget.setHorizontalHeaderLabels(cnt)
-        cur.execute("SELECT DISTINCT 病害类型, COUNT(*) AS 病害数量 FROM 病害标签 GROUP BY 病害类型")
+
+        cur.execute("SELECT ID,文件名, 病害 FROM 病害表 ORDER BY ID")
         adminInfor = (cur.fetchall())
         rowCount = len(adminInfor)
         self.tableWidget.setRowCount(rowCount)
@@ -264,7 +272,7 @@ class Ui_Dialog(object):
 
     def researchAllMethod(self):
         cur, conn = self.initDatabase()
-        databaseCol = ["ID", "文件名", "附件路径"]  # 表头列
+        databaseCol = ["ID", "文件名", "路径"]  # 表头列
         self.tableWidget.setColumnCount(len(databaseCol))
         cnt = list()
 
@@ -274,7 +282,7 @@ class Ui_Dialog(object):
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.tableWidget.setHorizontalHeaderLabels(cnt)
 
-        cur.execute("SELECT ID,文件名,附件路径 FROM 雷达图谱")
+        cur.execute("SELECT num AS ID,文件名, 路径 FROM 雷达图谱 ORDER BY ID")
         adminInfor = (cur.fetchall())
         rowCount = len(adminInfor)
         self.tableWidget.setRowCount(rowCount)
@@ -287,7 +295,7 @@ class Ui_Dialog(object):
 
     def selectCountMethod(self):
         cur, conn = self.initDatabase()
-        databaseCol = ["ID", "文件名", "病害类型", "附件路径"]  # 表头列
+        databaseCol = ["ID", "文件名", "病害数", "路径"]  # 表头列
         # defectClass = []
         self.tableWidget.setColumnCount(len(databaseCol))
         cnt = list()
@@ -298,7 +306,7 @@ class Ui_Dialog(object):
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.tableWidget.setHorizontalHeaderLabels(cnt)
 
-        cur.execute("SELECT ID,文件名,病害类型,附件路径 FROM 病害标签 ORDER BY ID")
+        cur.execute("SELECT num AS ID ,文件名,病害数, 路径 FROM 病害标签 ORDER BY ID")
         adminInfor = (cur.fetchall())
         rowCount = len(adminInfor)
         self.tableWidget.setRowCount(rowCount)
@@ -326,15 +334,25 @@ class Ui_Dialog(object):
         if self.uploadType == '雷达图像':
             cur, conn = self.initDatabase()
             for file in files:
+                print(file)
                 filePath, fileName = os.path.split(file)
-                shutil.copyfile(file, './数据库/雷达图像/' + fileName)
-                insertImageSQL = "INSERT INTO 雷达图谱(文件名,附件路径) VALUES('" + fileName[:-4] + "', '" + file + "'" + ")"
-                print(insertImageSQL)
+                resarchNumSQL = "SELECT COUNT(*) FROM 雷达图谱"
+                cur.execute(resarchNumSQL)
+                countNum = (cur.fetchall())
+                dataNum = countNum[0][0] + 1
+                # print(dataNum)
+                # print("INSERT INTO 雷达图谱(文件名,路径,num) VALUES('" + str(dataNum) + fileName[-4:] + "', '" + "./数据库/雷达图像/" + str(dataNum) + fileName[-4:] + "'" + ", '" + str(dataNum) + "')")
+                insertImageSQL = "INSERT INTO 雷达图谱(文件名,路径,num) VALUES('" + str(dataNum) + fileName[
+                                                                                          -4:] + "', '" + "./数据库/雷达图像/" + str(
+                    dataNum) + fileName[-4:] + "'" + ", '" + str(dataNum) + "')"
+                shutil.copyfile(file, './数据库/雷达图像/' + str(dataNum) + fileName[-4:])
+                # print(insertImageSQL)
                 cur.execute(insertImageSQL)
                 conn.commit()
             cur.close()
             conn.close()
-            QMessageBox.information(self.mainMenu, '提示', '雷达图像上传成功')
+            if len(files) != 0:
+                QMessageBox.information(self.mainMenu, '提示', '雷达图像上传成功')
 
         if self.uploadType == '标签':
             cur, conn = self.initDatabase()
@@ -342,6 +360,10 @@ class Ui_Dialog(object):
                 filePath, fileName = os.path.split(file)
                 root = ET.parse(file).getroot()
                 objects = root.findall('object')
+                resarchNumSQL = "SELECT COUNT(*) FROM 病害标签"
+                cur.execute(resarchNumSQL)
+                countNum = (cur.fetchall())
+                dataNum = countNum[0][0] + 1
                 for obj in objects:
                     difficult = obj.find('difficult').text.strip()
                     bbox = obj.find('bndbox')
@@ -361,18 +383,28 @@ class Ui_Dialog(object):
                         defectClass = '脱空'
                     if defectClass == 'loose':
                         defectClass = '疏松'
-                    insertImageSQL = "INSERT INTO 病害标签(文件名,病害类型,附件路径) VALUES('" + fileName[
-                                                                                  :-4] + "', '" + defectClass + "', '" + file + "'" + ")"
+                    insertImageSQL = "INSERT INTO 病害表(文件名,病害,num) VALUES('" + str(
+                        dataNum) + "', '" + defectClass + "', '" + str(dataNum) + "')"
                     print(insertImageSQL)
                     cur.execute(insertImageSQL)
                     conn.commit()
+
+                insertImageSQL = "INSERT INTO 病害标签(文件名,病害数,路径,num) VALUES('" + str(dataNum) + fileName[
+                                                                                              -4:] + "', " + "'" + str(
+                    len(objects)) + "', " + "'" + "./数据库/病害标签/" + str(
+                    dataNum) + fileName[-4:] + "'" + ", '" + str(dataNum) + "')"
+                print(insertImageSQL)
+                cur.execute(insertImageSQL)
+                conn.commit()
                 shutil.copyfile(file, './数据库/病害标签/' + fileName)
             cur.close()
             conn.close()
-            QMessageBox.information(self.mainMenu, '提示', '标签上传成功')
+            if len(files) != 0:
+                QMessageBox.information(self.mainMenu, '提示', '标签上传成功')
 
 
 if __name__ == "__main__":
+    print("当前python版本", sys.version)
     app = QtWidgets.QApplication(sys.argv)
     widget = QtWidgets.QWidget()
     new = MainWindow.Ui_Dialog()
