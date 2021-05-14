@@ -180,6 +180,11 @@
      <height>391</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>13</pointsize>
+    </font>
+   </property>
   </widget>
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">

@@ -1,3 +1,4 @@
+import datetime
 import os
 import shutil
 import pyodbc
@@ -9,7 +10,7 @@ if __name__ == '__main__':
 
     conn = pyodbc.connect(connStr)
     cur = conn.cursor()
-    # file = "G:/GPRlabel/1_0_1-01200.zol192.xml"
+    file = "G:/GPRlabel/1_0_1-01200.zol192.xml"
     # # filePath, fileName = os.path.split(file)
     # filePath, fileName = os.path.split(file)
     # # print(file)
@@ -68,12 +69,12 @@ if __name__ == '__main__':
     # # conn.commit()
     # # cur.execute("SELECT * FROM 病害类型")
     # # adminInfor = (cur.fetchall())
-    # # print(adminInfor)
-    # cur.close()
-    # conn.close()
-    file = 'G:/GPR_detect_pipline/data/VOC/2007_trainval/Annotations/1.xml'
-    filePath, fileName = os.path.split(file)
-    # resarchNumSQL = "SELECT COUNT(*) FROM 雷达图谱"
+    # # # print(adminInfor)
+    # # cur.close()
+    # # conn.close()
+    # file = 'G:/GPR_detect_pipline/data/VOC/2007_trainval/Annotations/1.xml'
+    # filePath, fileName = os.path.split(file)
+    # # resarchNumSQL = "SELECT COUNT(*) FROM 雷达图谱"
     # cur.execute(resarchNumSQL)
     # countNum = (cur.fetchall())
     # dataNum = countNum[0][0] + 1
@@ -84,13 +85,13 @@ if __name__ == '__main__':
     # print(insertImageSQL)
     # cur.execute(insertImageSQL)
     # conn.commit()
-    filePath, fileName = os.path.split(file)
-    root = ET.parse(file).getroot()
-    objects = root.findall('object')
-    resarchNumSQL = "SELECT COUNT(*) FROM 病害标签"
-    cur.execute(resarchNumSQL)
-    countNum = (cur.fetchall())
-    dataNum = countNum[0][0] + 1
+    # filePath, fileName = os.path.split(file)
+    # root = ET.parse(file).getroot()
+    # objects = root.findall('object')
+    # resarchNumSQL = "SELECT COUNT(*) FROM 病害标签"
+    # # cur.execute(resarchNumSQL)
+    # countNum = (cur.fetchall())
+    # dataNum = countNum[0][0] + 1
     # for obj in objects:
     #     difficult = obj.find('difficult').text.strip()
     #     bbox = obj.find('bndbox')
@@ -120,7 +121,47 @@ if __name__ == '__main__':
     # shutil.copyfile(file, './数据库/病害标签/' + fileName)
     # cur.close()
     # conn.close()
-    defectClass = '疏松'
-    insertImageSQL = "INSERT INTO 病害表(文件名,病害,num) VALUES('" + str(
-        dataNum) + "', " + defectClass + ", '" + str(dataNum) + "')"
+    filePath, fileName = os.path.split(file)
+    root = ET.parse(file).getroot()
+    objects = root.findall('object')
+    resarchNumSQL = "SELECT COUNT(*) FROM 病害标签"
+    cur.execute(resarchNumSQL)
+    countNum = (cur.fetchall())
+    dataNum = countNum[0][0] + 1
+    for obj in objects:
+        difficult = obj.find('difficult').text.strip()
+        bbox = obj.find('bndbox')
+        xmin = bbox.find('xmin').text.strip()
+        xmax = bbox.find('xmax').text.strip()
+        ymin = bbox.find('ymin').text.strip()
+        ymax = bbox.find('ymax').text.strip()
+        print(xmin, xmax, ymin, ymax)
+        defectClass = obj.find('name').text.lower().strip()
+        print(defectClass)
+        if defectClass == 'subgrade settlement':
+            defectClass = '路基下沉'
+        if defectClass == 'settlement':
+            defectClass = '路基下沉'
+        if defectClass == 'mud':
+            defectClass = '翻浆冒泥'
+        if defectClass == 'mud pumping':
+            defectClass = '翻浆冒泥'
+        if defectClass == 'cavity':
+            defectClass = '空洞'
+        if defectClass == 'separate':
+            defectClass = '脱空'
+        if defectClass == 'loose':
+            defectClass = '疏松'
+        insertImageSQL = "INSERT INTO 病害表(文件名, 病害, 病害位置, 标签文件) VALUES('" + str(
+            dataNum) + "', '" + defectClass + "', '" + "左下坐标: " + xmin + " " + ymin + " 右上坐标: " + xmax + " " + ymax + "', '" + fileName + "')"
+        print(insertImageSQL)
+        cur.execute(insertImageSQL)
+        conn.commit()
+    now = datetime.datetime.now()
+    insertImageSQL = "INSERT INTO 病害标签(文件名,病害数,路径,num,上传时间) VALUES('" + str(dataNum) + fileName[
+                                                                                       -4:] + "', " + "'" + str(
+        len(objects)) + "', " + "'" + "./数据库/病害标签/" + str(
+        dataNum) + fileName[-4:] + "'" + ", '" + str(dataNum) + "', '" + str(now.isoformat()) + "')"
     print(insertImageSQL)
+    cur.execute(insertImageSQL)
+    conn.commit()

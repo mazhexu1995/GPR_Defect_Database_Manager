@@ -5,6 +5,7 @@
 # Created by: PyQt5 UI code generator 5.11.3
 #
 # WARNING! All changes made in this file will be lost!
+import datetime
 import pyodbc
 
 from PyQt5.QtWidgets import *
@@ -92,6 +93,9 @@ class Ui_Dialog(object):
 
         self.tableWidget = QtWidgets.QTableWidget(Dialog)
         self.tableWidget.setGeometry(QtCore.QRect(60, 230, 1031, 451))
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.tableWidget.setFont(font)
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(0)
         self.tableWidget.setRowCount(0)
@@ -221,27 +225,7 @@ class Ui_Dialog(object):
 
     def defectClassMethod(self):
         cur, conn = self.initDatabase()
-        # databaseCol = ["病害类型", "病害数量"]  # 表头列
-        # # defectClass = []
-        # self.tableWidget.setColumnCount(len(databaseCol))
-        # cnt = list()
-        #
-        # for tup in databaseCol:
-        #     cnt.append(tup)
-        # cnt.append(" ")
-        # self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
-        # self.tableWidget.setHorizontalHeaderLabels(cnt)
-        # cur.execute("SELECT DISTINCT 病害类型, COUNT(*) AS 病害数量 FROM 病害标签 GROUP BY 病害类型")
-        # adminInfor = (cur.fetchall())
-        # rowCount = len(adminInfor)
-        # self.tableWidget.setRowCount(rowCount)
-        # for i in range(0, rowCount):
-        #     for j in range(0, len(databaseCol)):
-        #         newItem = QTableWidgetItem(str(adminInfor[i][j]))
-        #         self.tableWidget.setItem(i, j, newItem)
-        # cur.close()
-        # conn.close()
-        databaseCol = ["ID", "文件名", "病害"]  # 表头列
+        databaseCol = ["文件名", "病害", "病害位置", "标签文件"]  # 表头列
         self.tableWidget.setColumnCount(len(databaseCol))
         cnt = list()
 
@@ -251,7 +235,7 @@ class Ui_Dialog(object):
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.tableWidget.setHorizontalHeaderLabels(cnt)
 
-        cur.execute("SELECT ID,文件名, 病害 FROM 病害表 ORDER BY ID")
+        cur.execute("SELECT 文件名, 病害, 病害位置,标签文件 FROM 病害表 ORDER BY 文件名")
         adminInfor = (cur.fetchall())
         rowCount = len(adminInfor)
         self.tableWidget.setRowCount(rowCount)
@@ -272,7 +256,7 @@ class Ui_Dialog(object):
 
     def researchAllMethod(self):
         cur, conn = self.initDatabase()
-        databaseCol = ["ID", "文件名", "路径"]  # 表头列
+        databaseCol = ["ID", "文件名", "路径", "上传时间"]  # 表头列
         self.tableWidget.setColumnCount(len(databaseCol))
         cnt = list()
 
@@ -282,7 +266,7 @@ class Ui_Dialog(object):
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.tableWidget.setHorizontalHeaderLabels(cnt)
 
-        cur.execute("SELECT num AS ID,文件名, 路径 FROM 雷达图谱 ORDER BY ID")
+        cur.execute("SELECT num AS ID,文件名, 路径, 上传时间 FROM 雷达图谱 ORDER BY ID")
         adminInfor = (cur.fetchall())
         rowCount = len(adminInfor)
         self.tableWidget.setRowCount(rowCount)
@@ -295,7 +279,7 @@ class Ui_Dialog(object):
 
     def selectCountMethod(self):
         cur, conn = self.initDatabase()
-        databaseCol = ["ID", "文件名", "病害数", "路径"]  # 表头列
+        databaseCol = ["ID", "文件名", "病害数", "路径", "上传时间"]  # 表头列
         # defectClass = []
         self.tableWidget.setColumnCount(len(databaseCol))
         cnt = list()
@@ -306,7 +290,7 @@ class Ui_Dialog(object):
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.tableWidget.setHorizontalHeaderLabels(cnt)
 
-        cur.execute("SELECT num AS ID ,文件名,病害数, 路径 FROM 病害标签 ORDER BY ID")
+        cur.execute("SELECT num AS ID ,文件名,病害数, 路径, 上传时间 FROM 病害标签 ORDER BY ID")
         adminInfor = (cur.fetchall())
         rowCount = len(adminInfor)
         self.tableWidget.setRowCount(rowCount)
@@ -340,11 +324,12 @@ class Ui_Dialog(object):
                 cur.execute(resarchNumSQL)
                 countNum = (cur.fetchall())
                 dataNum = countNum[0][0] + 1
+                now = datetime.datetime.now()
                 # print(dataNum)
                 # print("INSERT INTO 雷达图谱(文件名,路径,num) VALUES('" + str(dataNum) + fileName[-4:] + "', '" + "./数据库/雷达图像/" + str(dataNum) + fileName[-4:] + "'" + ", '" + str(dataNum) + "')")
-                insertImageSQL = "INSERT INTO 雷达图谱(文件名,路径,num) VALUES('" + str(dataNum) + fileName[
-                                                                                          -4:] + "', '" + "./数据库/雷达图像/" + str(
-                    dataNum) + fileName[-4:] + "'" + ", '" + str(dataNum) + "')"
+                insertImageSQL = "INSERT INTO 雷达图谱(文件名,路径,num,上传时间) VALUES('" + str(dataNum) + fileName[
+                                                                                               -4:] + "', '" + "./数据库/雷达图像/" + str(
+                    dataNum) + fileName[-4:] + "'" + ", '" + str(dataNum) + "', '" + str(now.isoformat()) + "')"
                 shutil.copyfile(file, './数据库/雷达图像/' + str(dataNum) + fileName[-4:])
                 # print(insertImageSQL)
                 cur.execute(insertImageSQL)
@@ -367,6 +352,11 @@ class Ui_Dialog(object):
                 for obj in objects:
                     difficult = obj.find('difficult').text.strip()
                     bbox = obj.find('bndbox')
+                    xmin = bbox.find('xmin').text.strip()
+                    xmax = bbox.find('xmax').text.strip()
+                    ymin = bbox.find('ymin').text.strip()
+                    ymax = bbox.find('ymax').text.strip()
+                    print(xmin, xmax, ymin, ymax)
                     defectClass = obj.find('name').text.lower().strip()
                     print(defectClass)
                     if defectClass == 'subgrade settlement':
@@ -383,20 +373,22 @@ class Ui_Dialog(object):
                         defectClass = '脱空'
                     if defectClass == 'loose':
                         defectClass = '疏松'
-                    insertImageSQL = "INSERT INTO 病害表(文件名,病害,num) VALUES('" + str(
-                        dataNum) + "', '" + defectClass + "', '" + str(dataNum) + "')"
+                    # insertImageSQL = "INSERT INTO 病害表(文件名, 病害, 病害位置, 标签文件) VALUES('" + str(
+                    #     dataNum) + "', '" + defectClass + "', '" + str(bbox) + "', '" + fileName + "')"
+                    insertImageSQL = "INSERT INTO 病害表(文件名, 病害, 病害位置, 标签文件) VALUES('" + str(
+                        dataNum) + "', '" + defectClass + "', '" + "左下坐标: (" + xmin + ", " + ymin + ") 右上坐标: (" + xmax + ", " + ymax + ")', '" + fileName + "')"
                     print(insertImageSQL)
                     cur.execute(insertImageSQL)
                     conn.commit()
-
-                insertImageSQL = "INSERT INTO 病害标签(文件名,病害数,路径,num) VALUES('" + str(dataNum) + fileName[
-                                                                                              -4:] + "', " + "'" + str(
+                now = datetime.datetime.now()
+                insertImageSQL = "INSERT INTO 病害标签(文件名,病害数,路径,num,上传时间) VALUES('" + str(dataNum) + fileName[
+                                                                                                   -4:] + "', " + "'" + str(
                     len(objects)) + "', " + "'" + "./数据库/病害标签/" + str(
-                    dataNum) + fileName[-4:] + "'" + ", '" + str(dataNum) + "')"
+                    dataNum) + fileName[-4:] + "'" + ", '" + str(dataNum) + "', '" + str(now.isoformat()) + "')"
                 print(insertImageSQL)
                 cur.execute(insertImageSQL)
                 conn.commit()
-                shutil.copyfile(file, './数据库/病害标签/' + fileName)
+                shutil.copyfile(file, './数据库/病害标签/' + str(dataNum) + fileName[-4:])
             cur.close()
             conn.close()
             if len(files) != 0:
