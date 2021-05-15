@@ -225,7 +225,7 @@ class Ui_Dialog(object):
 
     def defectClassMethod(self):
         cur, conn = self.initDatabase()
-        databaseCol = ["文件名", "病害", "病害位置", "标签文件"]  # 表头列
+        databaseCol = ["文件名", "病害", "病害图分辨率", "病害坐标", "标签"]  # 表头列
         self.tableWidget.setColumnCount(len(databaseCol))
         cnt = list()
 
@@ -235,7 +235,7 @@ class Ui_Dialog(object):
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.tableWidget.setHorizontalHeaderLabels(cnt)
 
-        cur.execute("SELECT 文件名, 病害, 病害位置,标签文件 FROM 病害表 ORDER BY 文件名")
+        cur.execute("SELECT 文件名, 病害, 病害图分辨率, 病害坐标,标签 FROM 病害表 ORDER BY ID")
         adminInfor = (cur.fetchall())
         rowCount = len(adminInfor)
         self.tableWidget.setRowCount(rowCount)
@@ -349,6 +349,10 @@ class Ui_Dialog(object):
                 cur.execute(resarchNumSQL)
                 countNum = (cur.fetchall())
                 dataNum = countNum[0][0] + 1
+                size = root.findall('size')
+                width = size[0].find('width').text.strip()
+                height = size[0].find('height').text.strip()
+                print(width, height)
                 for obj in objects:
                     difficult = obj.find('difficult').text.strip()
                     bbox = obj.find('bndbox')
@@ -375,8 +379,9 @@ class Ui_Dialog(object):
                         defectClass = '疏松'
                     # insertImageSQL = "INSERT INTO 病害表(文件名, 病害, 病害位置, 标签文件) VALUES('" + str(
                     #     dataNum) + "', '" + defectClass + "', '" + str(bbox) + "', '" + fileName + "')"
-                    insertImageSQL = "INSERT INTO 病害表(文件名, 病害, 病害位置, 标签文件) VALUES('" + str(
-                        dataNum) + "', '" + defectClass + "', '" + "左下坐标: (" + xmin + ", " + ymin + ") 右上坐标: (" + xmax + ", " + ymax + ")', '" + fileName + "')"
+                    insertImageSQL = "INSERT INTO 病害表(文件名, 病害, 病害图分辨率,病害坐标, 标签) VALUES('" + str(
+                        dataNum) + "', '" + defectClass + "', '(" + width + "," + height + ")', '" + "左下坐标: (" + xmin + ", " + ymin + ") 右上坐标: (" + xmax + ", " + ymax + ")', '" + str(
+                        dataNum) + fileName[-4:] + "')"
                     print(insertImageSQL)
                     cur.execute(insertImageSQL)
                     conn.commit()

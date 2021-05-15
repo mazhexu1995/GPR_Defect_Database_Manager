@@ -3,6 +3,7 @@ import os
 import shutil
 import pyodbc
 import xml.etree.ElementTree as ET
+
 if __name__ == '__main__':
     pathfile = "./数据库/数据表/病害数据集.accdb"
     connStr = r'Driver={Microsoft Access Driver (*.mdb, *.accdb)};Dbq=%s;' % pathfile
@@ -123,6 +124,10 @@ if __name__ == '__main__':
     # conn.close()
     filePath, fileName = os.path.split(file)
     root = ET.parse(file).getroot()
+    size = root.findall('size')
+    width = size[0].find('width').text.strip()
+    height = size[0].find('height').text.strip()
+    print(width, height)
     objects = root.findall('object')
     resarchNumSQL = "SELECT COUNT(*) FROM 病害标签"
     cur.execute(resarchNumSQL)
@@ -152,16 +157,18 @@ if __name__ == '__main__':
             defectClass = '脱空'
         if defectClass == 'loose':
             defectClass = '疏松'
-        insertImageSQL = "INSERT INTO 病害表(文件名, 病害, 病害位置, 标签文件) VALUES('" + str(
-            dataNum) + "', '" + defectClass + "', '" + "左下坐标: " + xmin + " " + ymin + " 右上坐标: " + xmax + " " + ymax + "', '" + fileName + "')"
+        # insertImageSQL = "INSERT INTO 病害表(文件名, 病害, 病害分辨率,病害坐标, 标签) VALUES('" + str(
+        #     dataNum) + "', '" + defectClass + "', '" + "左下坐标: " + xmin + " " + ymin + " 右上坐标: " + xmax + " " + ymax + "', '" + fileName + "')"
+        insertImageSQL = "INSERT INTO 病害表(文件名, 病害, 病害图分辨率,病害坐标, 标签) VALUES('" + str(
+            dataNum) + "', '" + defectClass + "', '(" + width + "," + height + ")', '" + defectClass + "左下坐标: (" + xmin + ", " + ymin + ") 右上坐标: (" + xmax + ", " + ymax + ")', '" + fileName + "')"
         print(insertImageSQL)
         cur.execute(insertImageSQL)
         conn.commit()
-    now = datetime.datetime.now()
-    insertImageSQL = "INSERT INTO 病害标签(文件名,病害数,路径,num,上传时间) VALUES('" + str(dataNum) + fileName[
-                                                                                       -4:] + "', " + "'" + str(
-        len(objects)) + "', " + "'" + "./数据库/病害标签/" + str(
-        dataNum) + fileName[-4:] + "'" + ", '" + str(dataNum) + "', '" + str(now.isoformat()) + "')"
-    print(insertImageSQL)
-    cur.execute(insertImageSQL)
-    conn.commit()
+    # now = datetime.datetime.now()
+    # insertImageSQL = "INSERT INTO 病害标签(文件名,病害数,路径,num,上传时间) VALUES('" + str(dataNum) + fileName[
+    #                                                                                    -4:] + "', " + "'" + str(
+    #     len(objects)) + "', " + "'" + "./数据库/病害标签/" + str(
+    #     dataNum) + fileName[-4:] + "'" + ", '" + str(dataNum) + "', '" + str(now.isoformat()) + "')"
+    # print(insertImageSQL)
+    # cur.execute(insertImageSQL)
+    # conn.commit()
