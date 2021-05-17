@@ -204,6 +204,9 @@ class Ui_Dialog(object):
                 self.tableWidget.setItem(i, j, newItem)
         truncateTable = "DELETE FROM 映射表"
         cur.execute(truncateTable)
+        updateID = "ALter Table 映射表 alter ID Counter(1,1)"
+        cur.execute(updateID)
+
         insertSQL = "INSERT INTO 映射表 (文件名, 病害数, 雷达图像, 病害标签, 图像路径, 标签路径) VALUES (?, ?, ?, ?, ?, ?)"
         for i in range(0, rowCount):
             cur.execute(insertSQL, adminInfor[i][0], adminInfor[i][1], adminInfor[i][2], adminInfor[i][3], adminInfor[i][4], adminInfor[i][5])
