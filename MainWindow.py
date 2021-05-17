@@ -232,6 +232,7 @@ class Ui_Dialog(object):
         self.pushButton.clicked.connect(self.defectClassMethod)
         self.comboBox.currentIndexChanged.connect(self.filterClassMethod)
         self.reserchMap.clicked.connect(self.reserchMapMethod)
+        self.defectNum.clicked.connect(self.defectNumMethod)
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
@@ -272,11 +273,12 @@ class Ui_Dialog(object):
         cnt.append(" ")
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.tableWidget.setHorizontalHeaderLabels(cnt)
-        mutiTableSQL = ("SELECT 病害标签.id, 病害标签.病害数, 雷达图谱.文件名, 病害标签.文件名, 雷达图谱.路径, 病害标签.路径 FROM 病害标签 LEFT JOIN 雷达图谱 ON 病害标签.id=雷达图谱.id"
-                        + " UNION "
-                        + "SELECT 病害标签.id, 病害标签.病害数, 雷达图谱.文件名, 病害标签.文件名, 雷达图谱.路径, 病害标签.路径 FROM 病害标签 RIGHT JOIN 雷达图谱 ON 病害标签.id=雷达图谱.id"
-                        + " ORDER BY 病害标签.id"
-                        )
+        mutiTableSQL = (
+                    "SELECT 病害标签.id, 病害标签.病害数, 雷达图谱.文件名, 病害标签.文件名, 雷达图谱.路径, 病害标签.路径 FROM 病害标签 LEFT JOIN 雷达图谱 ON 病害标签.id=雷达图谱.id"
+                    + " UNION "
+                    + "SELECT 病害标签.id, 病害标签.病害数, 雷达图谱.文件名, 病害标签.文件名, 雷达图谱.路径, 病害标签.路径 FROM 病害标签 RIGHT JOIN 雷达图谱 ON 病害标签.id=雷达图谱.id"
+                    + " ORDER BY 病害标签.id"
+                    )
         cur.execute(mutiTableSQL)
         adminInfor = (cur.fetchall())
         rowCount = len(adminInfor)
@@ -293,8 +295,38 @@ class Ui_Dialog(object):
 
         insertSQL = "INSERT INTO 映射表 (文件名, 病害数, 雷达图像, 病害标签, 图像路径, 标签路径) VALUES (?, ?, ?, ?, ?, ?)"
         for i in range(0, rowCount):
-            cur.execute(insertSQL, adminInfor[i][0], adminInfor[i][1], adminInfor[i][2], adminInfor[i][3], adminInfor[i][4], adminInfor[i][5])
+            cur.execute(insertSQL, adminInfor[i][0], adminInfor[i][1], adminInfor[i][2], adminInfor[i][3],
+                        adminInfor[i][4], adminInfor[i][5])
         conn.commit()
+        cur.close()
+        conn.close()
+
+    def defectNumMethod(self):
+        cur, conn = self.initDatabase()
+        databaseCol = ["病害类型", "病害数量"]  # 表头列
+        self.tableWidget.setColumnCount(len(databaseCol))
+        cnt = list()
+
+        for tup in databaseCol:
+            cnt.append(tup)
+        cnt.append(" ")
+        self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
+        self.tableWidget.setHorizontalHeaderLabels(cnt)
+
+        cur.execute(
+            "SELECT 病害, COUNT(*) FROM 病害表 GROUP BY 病害")
+        adminInfor = (cur.fetchall())
+        rowCount = len(adminInfor)
+        sumNum = 0
+        self.tableWidget.setRowCount(rowCount + 1)
+        for i in range(0, rowCount):
+            for j in range(0, len(databaseCol)):
+                if j == len(databaseCol) - 1:
+                    sumNum += adminInfor[i][j]
+                newItem = QTableWidgetItem(str(adminInfor[i][j]))
+                self.tableWidget.setItem(i, j, newItem)
+        self.tableWidget.setItem(rowCount, 0, QTableWidgetItem('合计'))
+        self.tableWidget.setItem(rowCount, 1, QTableWidgetItem(str(sumNum)))
         cur.close()
         conn.close()
 
@@ -324,7 +356,7 @@ class Ui_Dialog(object):
 
     def defectClassMethod(self):
         cur, conn = self.initDatabase()
-        databaseCol = ["ID","文件名", "病害", "病害图分辨率", "病害坐标", "标签", "雷达图像"]  # 表头列
+        databaseCol = ["ID", "文件名", "病害", "病害图分辨率", "病害坐标", "标签", "雷达图像"]  # 表头列
         self.tableWidget.setColumnCount(len(databaseCol))
         cnt = list()
 
@@ -334,10 +366,11 @@ class Ui_Dialog(object):
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.tableWidget.setHorizontalHeaderLabels(cnt)
 
-        cur.execute("SELECT 病害表.ID, 病害表.文件名, 病害表.病害, 病害表.病害图分辨率, 病害表.病害坐标,病害表.标签, 雷达图谱.文件名 FROM 病害表 LEFT JOIN 雷达图谱 ON 病害表.文件名=雷达图谱.num"
-                    + " UNION "
-                    +"SELECT 病害表.ID, 病害表.文件名, 病害表.病害, 病害表.病害图分辨率, 病害表.病害坐标,病害表.标签, 雷达图谱.文件名 FROM 病害表 RIGHT JOIN 雷达图谱 ON 病害表.文件名=雷达图谱.num"
-                    + " ORDER BY 病害表.ID")
+        cur.execute(
+            "SELECT 病害表.ID, 病害表.文件名, 病害表.病害, 病害表.病害图分辨率, 病害表.病害坐标,病害表.标签, 雷达图谱.文件名 FROM 病害表 LEFT JOIN 雷达图谱 ON 病害表.文件名=雷达图谱.num"
+            + " UNION "
+            + "SELECT 病害表.ID, 病害表.文件名, 病害表.病害, 病害表.病害图分辨率, 病害表.病害坐标,病害表.标签, 雷达图谱.文件名 FROM 病害表 RIGHT JOIN 雷达图谱 ON 病害表.文件名=雷达图谱.num"
+            + " ORDER BY 病害表.ID")
         adminInfor = (cur.fetchall())
         rowCount = len(adminInfor)
         self.tableWidget.setRowCount(rowCount)
