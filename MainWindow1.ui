@@ -27,6 +27,12 @@
      <height>91</height>
     </rect>
    </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="font">
     <font>
      <pointsize>13</pointsize>
@@ -43,6 +49,12 @@
       <width>91</width>
       <height>31</height>
      </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
     </property>
     <property name="font">
      <font>
@@ -62,6 +74,12 @@
       <height>31</height>
      </rect>
     </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
    </widget>
    <widget class="QLabel" name="label">
     <property name="geometry">
@@ -71,6 +89,12 @@
       <width>91</width>
       <height>31</height>
      </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
     </property>
     <property name="font">
      <font>
@@ -90,6 +114,12 @@
       <height>31</height>
      </rect>
     </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
     <property name="text">
      <string>确定</string>
     </property>
@@ -103,6 +133,12 @@
       <height>31</height>
      </rect>
     </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
     <property name="text">
      <string>上传所有</string>
     </property>
@@ -115,6 +151,12 @@
       <width>171</width>
       <height>31</height>
      </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
     </property>
     <item>
      <property name="text">
@@ -131,11 +173,17 @@
   <widget class="QPushButton" name="selectCount">
    <property name="geometry">
     <rect>
-     <x>290</x>
+     <x>230</x>
      <y>170</y>
      <width>121</width>
      <height>41</height>
     </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
    </property>
    <property name="font">
     <font>
@@ -150,11 +198,17 @@
   <widget class="QPushButton" name="researchAll">
    <property name="geometry">
     <rect>
-     <x>130</x>
+     <x>80</x>
      <y>170</y>
      <width>121</width>
      <height>41</height>
     </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
    </property>
    <property name="font">
     <font>
@@ -174,6 +228,12 @@
      <height>451</height>
     </rect>
    </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="font">
     <font>
      <pointsize>13</pointsize>
@@ -189,11 +249,17 @@
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>450</x>
+     <x>380</x>
      <y>170</y>
      <width>121</width>
      <height>41</height>
     </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
    </property>
    <property name="font">
     <font>
@@ -207,11 +273,17 @@
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>820</x>
+     <x>860</x>
      <y>180</y>
      <width>111</width>
      <height>31</height>
     </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
    </property>
    <property name="font">
     <font>
@@ -225,11 +297,17 @@
   <widget class="QComboBox" name="comboBox">
    <property name="geometry">
     <rect>
-     <x>940</x>
+     <x>980</x>
      <y>180</y>
      <width>101</width>
      <height>31</height>
     </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
    </property>
    <property name="font">
     <font>
@@ -258,14 +336,44 @@
   <widget class="QPushButton" name="reserchMap">
    <property name="geometry">
     <rect>
-     <x>610</x>
+     <x>530</x>
      <y>170</y>
      <width>161</width>
      <height>41</height>
     </rect>
    </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="text">
     <string>图像与病害映射表</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="defectNum">
+   <property name="geometry">
+    <rect>
+     <x>720</x>
+     <y>170</y>
+     <width>121</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>11</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>病害数量</string>
    </property>
   </widget>
  </widget>

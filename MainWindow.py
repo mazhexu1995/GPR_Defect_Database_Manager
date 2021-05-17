@@ -77,7 +77,7 @@ class Ui_Dialog(object):
         self.All_Button.setObjectName("All_Button")
 
         self.selectCount = QtWidgets.QPushButton(Dialog)
-        self.selectCount.setGeometry(QtCore.QRect(290, 170, 121, 41))
+        self.selectCount.setGeometry(QtCore.QRect(230, 170, 121, 41))
         font = QtGui.QFont()
         font.setFamily("Agency FB")
         font.setPointSize(11)
@@ -85,7 +85,7 @@ class Ui_Dialog(object):
         self.selectCount.setObjectName("selectCount")
 
         self.researchAll = QtWidgets.QPushButton(Dialog)
-        self.researchAll.setGeometry(QtCore.QRect(130, 170, 121, 41))
+        self.researchAll.setGeometry(QtCore.QRect(80, 170, 121, 41))
         font = QtGui.QFont()
         font.setPointSize(11)
         self.researchAll.setFont(font)
@@ -103,32 +103,39 @@ class Ui_Dialog(object):
         self.tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
 
         self.pushButton = QtWidgets.QPushButton(Dialog)
-        self.pushButton.setGeometry(QtCore.QRect(450, 170, 121, 41))
+        self.pushButton.setGeometry(QtCore.QRect(380, 170, 121, 41))
         font = QtGui.QFont()
         font.setPointSize(11)
         self.pushButton.setFont(font)
         self.pushButton.setObjectName("pushButton")
 
         self.reserchMap = QtWidgets.QPushButton(Dialog)
-        self.reserchMap.setGeometry(QtCore.QRect(610, 170, 161, 41))
+        self.reserchMap.setGeometry(QtCore.QRect(530, 170, 161, 41))
         font = QtGui.QFont()
         font.setPointSize(11)
         self.reserchMap.setFont(font)
         self.reserchMap.setObjectName("reserchMap")
 
         self.label_3 = QtWidgets.QLabel(Dialog)
-        self.label_3.setGeometry(QtCore.QRect(820, 180, 111, 31))
+        self.label_3.setGeometry(QtCore.QRect(860, 180, 111, 31))
         font = QtGui.QFont()
         font.setPointSize(11)
         self.label_3.setFont(font)
         self.label_3.setObjectName("label_3")
 
         self.comboBox = QtWidgets.QComboBox(Dialog)
-        self.comboBox.setGeometry(QtCore.QRect(940, 180, 101, 31))
+        self.comboBox.setGeometry(QtCore.QRect(980, 180, 101, 31))
         font = QtGui.QFont()
         font.setPointSize(11)
         self.comboBox.setFont(font)
         self.comboBox.setObjectName("comboBox")
+
+        self.defectNum = QtWidgets.QPushButton(Dialog)
+        self.defectNum.setGeometry(QtCore.QRect(720, 170, 121, 41))
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        self.defectNum.setFont(font)
+        self.defectNum.setObjectName("defectNum")
 
         # 获取病害种类数
         self.classNum = self.getClassNum()
@@ -164,6 +171,7 @@ class Ui_Dialog(object):
         self.researchAll.setText(_translate("Dialog", "查询雷达图像"))
         self.pushButton.setText(_translate("Dialog", "查询病害表"))
         self.label_3.setText(_translate("Dialog", "筛选病害类别"))
+        self.defectNum.setText(_translate("Dialog", "病害数量"))
         self.reserchMap.setText(_translate("Dialog", "更新并生成映射表"))
 
         cur, conn = self.initDatabase()
