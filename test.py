@@ -99,7 +99,7 @@ if __name__ == '__main__':
     #     defectClass = obj.find('name').text.lower().strip()
     #     print(defectClass)
     #     if defectClass == 'subgrade settlement':
-    #         defectClass = '路基下沉'
+    defectClass = '路基下沉'
     #     if defectClass == 'settlement':
     #         defectClass = '路基下沉'
     #     if defectClass == 'mud':
@@ -128,9 +128,13 @@ if __name__ == '__main__':
     width = size[0].find('width').text.strip()
     height = size[0].find('height').text.strip()
     print(width, height)
+    SQL = "SELECT 病害表.文件名, 病害表.病害, 病害表.病害图分辨率, 病害表.病害坐标,病害表.标签, 雷达图谱.文件名 FROM 病害表 LEFT JOIN 雷达图谱 ON 病害表.文件名=雷达图谱.num"
+
+    # mutiTableSQL = "SELECT 文件名, 病害, 病害图分辨率, 病害坐标,标签 FROM 病害表 WHERE [病害类型]= '" + defectClass + "'" + "ORDER BY ID"
+    print(SQL)
     objects = root.findall('object')
     resarchNumSQL = "SELECT COUNT(*) FROM 病害标签"
-    cur.execute(resarchNumSQL)
+    cur.execute(SQL)
     countNum = (cur.fetchall())
     dataNum = countNum[0][0] + 1
     for obj in objects:

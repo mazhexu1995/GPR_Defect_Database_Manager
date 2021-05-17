@@ -24,7 +24,7 @@ class Ui_Dialog(object):
 
     def getClassNum(self):
         cur, conn = self.initDatabase()
-        cur.execute("SELECT DISTINCT 病害 FROM 映射表")
+        cur.execute("SELECT DISTINCT 病害 FROM 病害表")
         adminInfor = (cur.fetchall())
         rowCount = len(adminInfor)
         self.classNum = rowCount
@@ -124,7 +124,7 @@ class Ui_Dialog(object):
         self.label_3.setObjectName("label_3")
 
         self.comboBox = QtWidgets.QComboBox(Dialog)
-        self.comboBox.setGeometry(QtCore.QRect(940, 180, 71, 31))
+        self.comboBox.setGeometry(QtCore.QRect(940, 180, 101, 31))
         font = QtGui.QFont()
         font.setPointSize(11)
         self.comboBox.setFont(font)
@@ -167,7 +167,7 @@ class Ui_Dialog(object):
         self.reserchMap.setText(_translate("Dialog", "图像与病害映射表"))
 
         cur, conn = self.initDatabase()
-        cur.execute("SELECT DISTINCT 病害 FROM 映射表")
+        cur.execute("SELECT DISTINCT 病害 FROM 病害表")
         adminInfor = (cur.fetchall())
         rowCount = len(adminInfor)
         self.classNum = rowCount
@@ -203,7 +203,7 @@ class Ui_Dialog(object):
     def filterClassMethod(self):
         defectClass = self.comboBox.currentText()
         cur, conn = self.initDatabase()
-        databaseCol = ["ID", "文件名", "病害类型", "标签文件路径", "雷达文件路径"]  # 表头列
+        databaseCol = ["ID", "图像与标签名", "病害", "病害图分辨率", "病害坐标"]  # 表头列
         self.tableWidget.setColumnCount(len(databaseCol))
         cnt = list()
         for tup in databaseCol:
@@ -211,8 +211,9 @@ class Ui_Dialog(object):
         cnt.append(" ")
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.tableWidget.setHorizontalHeaderLabels(cnt)
-        mutiTableSQL = "SELECT 病害标签.id, 病害标签.文件名, 病害标签.病害类型, 病害标签.附件路径, 雷达图谱.附件路径 FROM 病害标签 LEFT JOIN 雷达图谱 ON 病害标签.文件名=雷达图谱.文件名 WHERE [病害类型]= '" + defectClass + "'"
-        cur.execute(mutiTableSQL)
+        filterDefectSQL = "SELECT ID, 文件名, 病害, 病害图分辨率, 病害坐标 FROM 病害表 WHERE [病害]='" + defectClass + "'" + " ORDER BY ID"
+        print(filterDefectSQL)
+        cur.execute(filterDefectSQL)
         adminInfor = (cur.fetchall())
         rowCount = len(adminInfor)
         self.tableWidget.setRowCount(rowCount)
@@ -225,7 +226,7 @@ class Ui_Dialog(object):
 
     def defectClassMethod(self):
         cur, conn = self.initDatabase()
-        databaseCol = ["文件名", "病害", "病害图分辨率", "病害坐标", "标签"]  # 表头列
+        databaseCol = ["文件名", "病害", "病害图分辨率", "病害坐标", "标签", "雷达图像"]  # 表头列
         self.tableWidget.setColumnCount(len(databaseCol))
         cnt = list()
 
@@ -235,7 +236,7 @@ class Ui_Dialog(object):
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.tableWidget.setHorizontalHeaderLabels(cnt)
 
-        cur.execute("SELECT 文件名, 病害, 病害图分辨率, 病害坐标,标签 FROM 病害表 ORDER BY ID")
+        cur.execute("SELECT 病害表.文件名, 病害表.病害, 病害表.病害图分辨率, 病害表.病害坐标,病害表.标签, 雷达图谱.文件名 FROM 病害表 LEFT JOIN 雷达图谱 ON 病害表.文件名=雷达图谱.num")
         adminInfor = (cur.fetchall())
         rowCount = len(adminInfor)
         self.tableWidget.setRowCount(rowCount)
