@@ -164,7 +164,7 @@ class Ui_Dialog(object):
         self.researchAll.setText(_translate("Dialog", "查询雷达图像"))
         self.pushButton.setText(_translate("Dialog", "查询病害表"))
         self.label_3.setText(_translate("Dialog", "筛选病害类别"))
-        self.reserchMap.setText(_translate("Dialog", "图像与病害映射表"))
+        self.reserchMap.setText(_translate("Dialog", "更新并生成映射表"))
 
         cur, conn = self.initDatabase()
         cur.execute("SELECT DISTINCT 病害 FROM 病害表")
@@ -180,7 +180,7 @@ class Ui_Dialog(object):
 
     def reserchMapMethod(self):
         cur, conn = self.initDatabase()
-        databaseCol = ["ID", "文件名", "病害类型", "标签文件路径", "雷达文件路径"]  # 表头列
+        databaseCol = ["文件名", "病害数", "雷达图像", "病害标签", "图像路径", "标签路径"]  # 表头列
         self.tableWidget.setColumnCount(len(databaseCol))
         cnt = list()
         for tup in databaseCol:
@@ -188,15 +188,26 @@ class Ui_Dialog(object):
         cnt.append(" ")
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.tableWidget.setHorizontalHeaderLabels(cnt)
-        mutiTableSQL = "SELECT 病害标签.id, 病害标签.文件名, 病害标签.病害类型, 病害标签.附件路径, 雷达图谱.附件路径 FROM 病害标签 LEFT JOIN 雷达图谱 ON 病害标签.文件名=雷达图谱.文件名"
+        mutiTableSQL = ("SELECT 病害标签.id, 病害标签.病害数, 雷达图谱.文件名, 病害标签.文件名, 雷达图谱.路径, 病害标签.路径 FROM 病害标签 LEFT JOIN 雷达图谱 ON 病害标签.id=雷达图谱.id"
+                        + " UNION "
+                        + "SELECT 病害标签.id, 病害标签.病害数, 雷达图谱.文件名, 病害标签.文件名, 雷达图谱.路径, 病害标签.路径 FROM 病害标签 RIGHT JOIN 雷达图谱 ON 病害标签.id=雷达图谱.id"
+                        + " ORDER BY 病害标签.id"
+                        )
         cur.execute(mutiTableSQL)
         adminInfor = (cur.fetchall())
         rowCount = len(adminInfor)
         self.tableWidget.setRowCount(rowCount)
+        print(adminInfor[0])
         for i in range(0, rowCount):
             for j in range(0, len(databaseCol)):
                 newItem = QTableWidgetItem(str(adminInfor[i][j]))
                 self.tableWidget.setItem(i, j, newItem)
+        truncateTable = "DELETE FROM 映射表"
+        cur.execute(truncateTable)
+        insertSQL = "INSERT INTO 映射表 (文件名, 病害数, 雷达图像, 病害标签, 图像路径, 标签路径) VALUES (?, ?, ?, ?, ?, ?)"
+        for i in range(0, rowCount):
+            cur.execute(insertSQL, adminInfor[i][0], adminInfor[i][1], adminInfor[i][2], adminInfor[i][3], adminInfor[i][4], adminInfor[i][5])
+        conn.commit()
         cur.close()
         conn.close()
 
