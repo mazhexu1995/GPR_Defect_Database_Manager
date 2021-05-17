@@ -226,7 +226,7 @@ class Ui_Dialog(object):
 
     def defectClassMethod(self):
         cur, conn = self.initDatabase()
-        databaseCol = ["文件名", "病害", "病害图分辨率", "病害坐标", "标签", "雷达图像"]  # 表头列
+        databaseCol = ["ID","文件名", "病害", "病害图分辨率", "病害坐标", "标签", "雷达图像"]  # 表头列
         self.tableWidget.setColumnCount(len(databaseCol))
         cnt = list()
 
@@ -236,7 +236,10 @@ class Ui_Dialog(object):
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.tableWidget.setHorizontalHeaderLabels(cnt)
 
-        cur.execute("SELECT 病害表.文件名, 病害表.病害, 病害表.病害图分辨率, 病害表.病害坐标,病害表.标签, 雷达图谱.文件名 FROM 病害表 LEFT JOIN 雷达图谱 ON 病害表.文件名=雷达图谱.num")
+        cur.execute("SELECT 病害表.ID, 病害表.文件名, 病害表.病害, 病害表.病害图分辨率, 病害表.病害坐标,病害表.标签, 雷达图谱.文件名 FROM 病害表 LEFT JOIN 雷达图谱 ON 病害表.文件名=雷达图谱.num"
+                    + " UNION "
+                    +"SELECT 病害表.ID, 病害表.文件名, 病害表.病害, 病害表.病害图分辨率, 病害表.病害坐标,病害表.标签, 雷达图谱.文件名 FROM 病害表 RIGHT JOIN 雷达图谱 ON 病害表.文件名=雷达图谱.num"
+                    + " ORDER BY 病害表.ID")
         adminInfor = (cur.fetchall())
         rowCount = len(adminInfor)
         self.tableWidget.setRowCount(rowCount)
