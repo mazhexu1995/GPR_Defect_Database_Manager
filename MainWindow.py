@@ -14,6 +14,7 @@ import shutil
 import sys
 import MainWindow
 from PyQt5 import QtCore, QtGui, QtWidgets
+
 import xml.etree.ElementTree as ET
 
 
@@ -214,7 +215,7 @@ class Ui_Dialog(object):
         self.defectNum.setObjectName("defectNum")
 
         self.deleteButton = QtWidgets.QPushButton(Dialog)
-        self.deleteButton.setGeometry(QtCore.QRect(772, 690, 171, 28))
+        self.deleteButton.setGeometry(QtCore.QRect(890, 690, 171, 28))
         self.deleteButton.setObjectName("deleteButton")
 
         # 获取病害种类数
@@ -237,6 +238,7 @@ class Ui_Dialog(object):
         self.comboBox.currentIndexChanged.connect(self.filterClassMethod)
         self.reserchMap.clicked.connect(self.reserchMapMethod)
         self.defectNum.clicked.connect(self.defectNumMethod)
+        self.deleteButton.clicked.connect(self.deleteButtonMethod)
         self.retranslateUi(Dialog)
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
@@ -279,11 +281,11 @@ class Ui_Dialog(object):
         self.tableWidget.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeToContents)
         self.tableWidget.setHorizontalHeaderLabels(cnt)
         mutiTableSQL = (
-                    "SELECT 病害标签.id, 病害标签.病害数, 雷达图谱.文件名, 病害标签.文件名, 雷达图谱.路径, 病害标签.路径 FROM 病害标签 LEFT JOIN 雷达图谱 ON 病害标签.id=雷达图谱.id"
-                    + " UNION "
-                    + "SELECT 病害标签.id, 病害标签.病害数, 雷达图谱.文件名, 病害标签.文件名, 雷达图谱.路径, 病害标签.路径 FROM 病害标签 RIGHT JOIN 雷达图谱 ON 病害标签.id=雷达图谱.id"
-                    + " ORDER BY 病害标签.id"
-                    )
+                "SELECT 病害标签.id, 病害标签.病害数, 雷达图谱.文件名, 病害标签.文件名, 雷达图谱.路径, 病害标签.路径 FROM 病害标签 LEFT JOIN 雷达图谱 ON 病害标签.id=雷达图谱.id"
+                + " UNION "
+                + "SELECT 病害标签.id, 病害标签.病害数, 雷达图谱.文件名, 病害标签.文件名, 雷达图谱.路径, 病害标签.路径 FROM 病害标签 RIGHT JOIN 雷达图谱 ON 病害标签.id=雷达图谱.id"
+                + " ORDER BY 病害标签.id"
+        )
         cur.execute(mutiTableSQL)
         adminInfor = (cur.fetchall())
         rowCount = len(adminInfor)
@@ -411,17 +413,34 @@ class Ui_Dialog(object):
         rowCount = len(adminInfor)
         self.tableWidget.setRowCount(rowCount)
         for i in range(0, rowCount):
-            for j in range(0, len(databaseCol)-1):
+            for j in range(0, len(databaseCol) - 1):
                 newItem = QTableWidgetItem(str(adminInfor[i][j]))
                 # deleteButton = QtWidgets.QPushButton("删除")
                 # deleteButton.clicked.connect(self.deleteClicked)
                 self.check = QtWidgets.QTableWidgetItem()
                 self.check.setCheckState(QtCore.Qt.Unchecked)
                 self.tableWidget.setItem(i, 0, self.check)
-                self.tableWidget.setItem(i, j+1, newItem)
+                self.tableWidget.setItem(i, j + 1, newItem)
                 # self.tableWidget.setCellWidget(i, len(databaseCol)-1, deleteButton)
         cur.close()
         conn.close()
+
+    def deleteButtonMethod(self):
+        # print(self.tableWidget.item(0, 0).type())
+        # self.tableWidget.setFocusPolicy(QtCore.Qt.NoFocus)
+        button = QMessageBox.warning(self.mainMenu, "警告", "该操作可能导致数据库表ID混乱并删除对应文件，是否继续?",
+                                     QMessageBox.Yes | QMessageBox.No)
+        if button == QMessageBox.Yes:
+            rows = self.tableWidget.rowCount()
+            for rows_index in range(rows - 1, -1, -1):
+                checkBoxState = self.tableWidget.item(rows_index, 0).checkState()
+                print(checkBoxState)
+                if checkBoxState == 2:
+                    self.tableWidget.removeRow(rows_index)  # 删除指定行
+            QMessageBox.information(self.mainMenu, "提示", "数据库表及文件已更新，删除完成")
+            return
+        if button == QMessageBox.No:
+            return
 
     def selectCountMethod(self):
         cur, conn = self.initDatabase()
@@ -441,12 +460,12 @@ class Ui_Dialog(object):
         rowCount = len(adminInfor)
         self.tableWidget.setRowCount(rowCount)
         for i in range(0, rowCount):
-            for j in range(0, len(databaseCol)-1):
+            for j in range(0, len(databaseCol) - 1):
                 newItem = QTableWidgetItem(str(adminInfor[i][j]))
                 self.check = QtWidgets.QTableWidgetItem()
                 self.check.setCheckState(QtCore.Qt.Unchecked)
                 self.tableWidget.setItem(i, 0, self.check)
-                self.tableWidget.setItem(i, j+1, newItem)
+                self.tableWidget.setItem(i, j + 1, newItem)
         cur.close()
         conn.close()
 
