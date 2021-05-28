@@ -290,7 +290,7 @@ class Ui_Dialog(object):
         adminInfor = (cur.fetchall())
         rowCount = len(adminInfor)
         self.tableWidget.setRowCount(rowCount)
-        print(adminInfor[0])
+        print(adminInfor)
         for i in range(0, rowCount):
             for j in range(0, len(databaseCol)):
                 newItem = QTableWidgetItem(str(adminInfor[i][j]))
@@ -428,16 +428,34 @@ class Ui_Dialog(object):
     def deleteButtonMethod(self):
         # print(self.tableWidget.item(0, 0).type())
         # self.tableWidget.setFocusPolicy(QtCore.Qt.NoFocus)
-        button = QMessageBox.warning(self.mainMenu, "警告", "该操作可能导致数据库表ID混乱并删除对应文件，是否继续?",
+        button = QMessageBox.warning(self.mainMenu, "警告", "该操作会导致数据库表中ID混乱，并删除对应文件与所有表中对应数据，是否继续?",
                                      QMessageBox.Yes | QMessageBox.No)
         if button == QMessageBox.Yes:
             rows = self.tableWidget.rowCount()
+            removeState = 0
+            cur, conn = self.initDatabase()
             for rows_index in range(rows - 1, -1, -1):
                 checkBoxState = self.tableWidget.item(rows_index, 0).checkState()
                 print(checkBoxState)
                 if checkBoxState == 2:
+                    deleteItem = "DELETE FROM 雷达图谱 WHERE num = '" + str(rows_index) + "'"
+                    cur.execute(deleteItem)
+                    conn.commit()
+                    deleteItem = "DELETE FROM 病害标签 WHERE num = '" + str(rows_index) + "'"
+                    cur.execute(deleteItem)
+                    conn.commit()
+                    deleteItem = "DELETE FROM 病害表 WHERE 文件名 = '" + str(rows_index) + "'"
+                    cur.execute(deleteItem)
+                    conn.commit()
+                    removeState = 1
                     self.tableWidget.removeRow(rows_index)  # 删除指定行
-            QMessageBox.information(self.mainMenu, "提示", "数据库表及文件已更新，删除完成")
+            cur.close()
+            conn.close()
+            if removeState == 1:
+                QMessageBox.information(self.mainMenu, "提示", "数据库表及文件已更新，删除完成")
+
+            if removeState == 0:
+                QMessageBox.information(self.mainMenu, "提示", "无删除数据")
             return
         if button == QMessageBox.No:
             return
