@@ -213,6 +213,10 @@ class Ui_Dialog(object):
         self.defectNum.setFont(font)
         self.defectNum.setObjectName("defectNum")
 
+        self.deleteButton = QtWidgets.QPushButton(Dialog)
+        self.deleteButton.setGeometry(QtCore.QRect(772, 690, 171, 28))
+        self.deleteButton.setObjectName("deleteButton")
+
         # 获取病害种类数
         self.classNum = self.getClassNum()
         for i in range(0, self.classNum):
@@ -250,6 +254,7 @@ class Ui_Dialog(object):
         self.label_3.setText(_translate("Dialog", "筛选病害类别"))
         self.defectNum.setText(_translate("Dialog", "病害数量"))
         self.reserchMap.setText(_translate("Dialog", "更新并生成映射表"))
+        self.deleteButton.setText(_translate("Dialog", "删除选中的数据"))
 
         cur, conn = self.initDatabase()
         cur.execute("SELECT DISTINCT 病害 FROM 病害表")
@@ -391,7 +396,7 @@ class Ui_Dialog(object):
 
     def researchAllMethod(self):
         cur, conn = self.initDatabase()
-        databaseCol = ["ID", "文件名", "路径", "上传时间"]  # 表头列
+        databaseCol = ["选中", "ID", "文件名", "路径", "上传时间"]  # 表头列
         self.tableWidget.setColumnCount(len(databaseCol))
         cnt = list()
 
@@ -406,15 +411,21 @@ class Ui_Dialog(object):
         rowCount = len(adminInfor)
         self.tableWidget.setRowCount(rowCount)
         for i in range(0, rowCount):
-            for j in range(0, len(databaseCol)):
+            for j in range(0, len(databaseCol)-1):
                 newItem = QTableWidgetItem(str(adminInfor[i][j]))
-                self.tableWidget.setItem(i, j, newItem)
+                # deleteButton = QtWidgets.QPushButton("删除")
+                # deleteButton.clicked.connect(self.deleteClicked)
+                self.check = QtWidgets.QTableWidgetItem()
+                self.check.setCheckState(QtCore.Qt.Unchecked)
+                self.tableWidget.setItem(i, 0, self.check)
+                self.tableWidget.setItem(i, j+1, newItem)
+                # self.tableWidget.setCellWidget(i, len(databaseCol)-1, deleteButton)
         cur.close()
         conn.close()
 
     def selectCountMethod(self):
         cur, conn = self.initDatabase()
-        databaseCol = ["ID", "文件名", "病害数", "路径", "上传时间"]  # 表头列
+        databaseCol = ["选中", "ID", "文件名", "病害数", "路径", "上传时间"]  # 表头列
         # defectClass = []
         self.tableWidget.setColumnCount(len(databaseCol))
         cnt = list()
@@ -430,9 +441,12 @@ class Ui_Dialog(object):
         rowCount = len(adminInfor)
         self.tableWidget.setRowCount(rowCount)
         for i in range(0, rowCount):
-            for j in range(0, len(databaseCol)):
+            for j in range(0, len(databaseCol)-1):
                 newItem = QTableWidgetItem(str(adminInfor[i][j]))
-                self.tableWidget.setItem(i, j, newItem)
+                self.check = QtWidgets.QTableWidgetItem()
+                self.check.setCheckState(QtCore.Qt.Unchecked)
+                self.tableWidget.setItem(i, 0, self.check)
+                self.tableWidget.setItem(i, j+1, newItem)
         cur.close()
         conn.close()
 
