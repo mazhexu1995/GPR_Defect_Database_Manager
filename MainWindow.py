@@ -452,6 +452,9 @@ class Ui_Dialog(object):
         files, _ = QFileDialog.getOpenFileNames(self.mainMenu, "多文件选择", self.databasePath)
         if self.uploadType == '雷达图像':
             cur, conn = self.initDatabase()
+            updateID = "ALter Table 雷达图谱 alter ID Counter(1,1)"
+            cur.execute(updateID)
+            conn.commit()
             for file in files:
                 print(file)
                 filePath, fileName = os.path.split(file)
@@ -476,6 +479,12 @@ class Ui_Dialog(object):
 
         if self.uploadType == '标签':
             cur, conn = self.initDatabase()
+            updateID = "ALter Table 病害标签 alter ID Counter(1,1)"
+            cur.execute(updateID)
+            conn.commit()
+            updateID = "ALter Table 病害表 alter ID Counter(1,1)"
+            cur.execute(updateID)
+            conn.commit()
             for file in files:
                 filePath, fileName = os.path.split(file)
                 root = ET.parse(file).getroot()
@@ -514,11 +523,11 @@ class Ui_Dialog(object):
                         defectClass = '疏松'
                     # insertImageSQL = "INSERT INTO 病害表(文件名, 病害, 病害位置, 标签文件) VALUES('" + str(
                     #     dataNum) + "', '" + defectClass + "', '" + str(bbox) + "', '" + fileName + "')"
-                    insertImageSQL = "INSERT INTO 病害表(文件名, 病害, 病害图分辨率,病害坐标, 标签) VALUES('" + str(
+                    insertDefectTableSQL = "INSERT INTO 病害表(文件名, 病害, 病害图分辨率,病害坐标, 标签) VALUES('" + str(
                         dataNum) + "', '" + defectClass + "', '(" + width + "," + height + ")', '" + "左下坐标: (" + xmin + ", " + ymin + ") 右上坐标: (" + xmax + ", " + ymax + ")', '" + str(
                         dataNum) + fileName[-4:] + "')"
-                    print(insertImageSQL)
-                    cur.execute(insertImageSQL)
+                    print(insertDefectTableSQL)
+                    cur.execute(insertDefectTableSQL)
                     conn.commit()
                 now = datetime.datetime.now()
                 insertImageSQL = "INSERT INTO 病害标签(文件名,病害数,路径,num,上传时间) VALUES('" + str(dataNum) + fileName[
