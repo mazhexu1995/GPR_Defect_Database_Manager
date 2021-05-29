@@ -427,7 +427,7 @@ class Ui_Dialog(object):
 
     def deleteButtonMethod(self):
         # print(self.tableWidget.item(0, 0).type())
-        # self.tableWidget.setFocusPolicy(QtCore.Qt.NoFocus)
+        self.tableWidget.setFocusPolicy(QtCore.Qt.NoFocus)
         button = QMessageBox.warning(self.mainMenu, "警告", "该操作会导致数据库表中ID混乱，并删除对应文件与所有表中对应数据，是否继续?",
                                      QMessageBox.Yes | QMessageBox.No)
         if button == QMessageBox.Yes:
@@ -438,13 +438,35 @@ class Ui_Dialog(object):
                 checkBoxState = self.tableWidget.item(rows_index, 0).checkState()
                 print(checkBoxState)
                 if checkBoxState == 2:
-                    deleteItem = "DELETE FROM 雷达图谱 WHERE num = '" + str(rows_index) + "'"
+                    selectId = self.tableWidget.item(rows_index, 1).text()  # 获取选中行ID
+                    searchImageItem = "SELECT 路径 FROM 雷达图谱 WHERE num = '" + str(selectId) + "'"
+                    cur.execute(searchImageItem)
+                    print(searchImageItem)
+                    imageInfo = (cur.fetchall())
+                    imagePath = imageInfo[0][0]
+                    print(imagePath)
+                    # conn.commit()
+                    if os.path.exists(imagePath):
+                        os.remove(imagePath)
+
+
+                    searchLabelItem = "SELECT 路径 FROM 病害标签 WHERE num = '" + str(selectId) + "'"
+                    cur.execute(searchLabelItem)
+                    print(searchLabelItem)
+                    labelInfo = (cur.fetchall())
+                    labelPath = labelInfo[0][0]
+                    print(labelPath)
+                    # conn.commit()
+                    if os.path.exists(labelPath):
+                        os.remove(labelPath)
+
+                    deleteItem = "DELETE FROM 雷达图谱 WHERE num = '" + str(selectId) + "'"
                     cur.execute(deleteItem)
                     conn.commit()
-                    deleteItem = "DELETE FROM 病害标签 WHERE num = '" + str(rows_index) + "'"
+                    deleteItem = "DELETE FROM 病害标签 WHERE num = '" + str(selectId) + "'"
                     cur.execute(deleteItem)
                     conn.commit()
-                    deleteItem = "DELETE FROM 病害表 WHERE 文件名 = '" + str(rows_index) + "'"
+                    deleteItem = "DELETE FROM 病害表 WHERE 文件名 = '" + str(selectId) + "'"
                     cur.execute(deleteItem)
                     conn.commit()
                     removeState = 1
@@ -452,7 +474,7 @@ class Ui_Dialog(object):
             cur.close()
             conn.close()
             if removeState == 1:
-                QMessageBox.information(self.mainMenu, "提示", "数据库表及文件已更新，删除完成")
+                QMessageBox.information(self.mainMenu, "提示", "数据库表及文件已更新，请及时更新映射表!")
 
             if removeState == 0:
                 QMessageBox.information(self.mainMenu, "提示", "无删除数据")
