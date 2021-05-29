@@ -503,9 +503,9 @@ class Ui_Dialog(object):
         files, _ = QFileDialog.getOpenFileNames(self.mainMenu, "多文件选择", self.databasePath)
         if self.uploadType == '雷达图像':
             cur, conn = self.initDatabase()
-            updateID = "ALter Table 雷达图谱 alter ID Counter(1,1)"
-            cur.execute(updateID)
-            conn.commit()
+            # updateID = "ALter Table 雷达图谱 alter ID Counter(1,1)"
+            # cur.execute(updateID)
+            # conn.commit()
             for file in files:
                 print(file)
                 filePath, fileName = os.path.split(file)
@@ -530,12 +530,12 @@ class Ui_Dialog(object):
 
         if self.uploadType == '标签':
             cur, conn = self.initDatabase()
-            updateID = "ALter Table 病害标签 alter ID Counter(1,1)"
-            cur.execute(updateID)
-            conn.commit()
-            updateID = "ALter Table 病害表 alter ID Counter(1,1)"
-            cur.execute(updateID)
-            conn.commit()
+            # updateID = "ALter Table 病害标签 alter ID Counter(1,1)"
+            # cur.execute(updateID)
+            # conn.commit()
+            # updateID = "ALter Table 病害表 alter ID Counter(1,1)"
+            # cur.execute(updateID)
+            # conn.commit()
             for file in files:
                 filePath, fileName = os.path.split(file)
                 root = ET.parse(file).getroot()
